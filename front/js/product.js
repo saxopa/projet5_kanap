@@ -90,13 +90,17 @@ buttonCart.addEventListener("click", () => {
 
   // Création d'un tableau pour stocker les produits
   let products = [];
-  if (localStorage.getItem("buttonCart") !== null) {
-    products = JSON.parse(localStorage.getItem("buttonCart"));
-    products.push(addProduct);
-    localStorage.setItem("buttonCart", JSON.stringify(products));
-  } else {
-    console.log("Le panier est vide");
+  if (localStorage.getItem("panier") !== null) {
+    // Si le panier n'est pas vide, je récupère les données du panier
+    //parse pour convertir une chaine de caractère au format JSON en objet JS
+    products = JSON.parse(localStorage.getItem("panier"));
   }
+
+
+    products.push(addProduct);
+    //stingify pour convertir les données au format JSON en chaîne de caractères
+    localStorage.setItem("panier", JSON.stringify(products));
+    window.location.href = "cart.html";
 });
 
 // Appel de la fonction pour récupérer et afficher les détails de l'article
