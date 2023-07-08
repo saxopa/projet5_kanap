@@ -96,7 +96,9 @@ buttonCart.addEventListener("click", () => {
     products = JSON.parse(localStorage.getItem("panier"));
   }
 
-
+  if (products.find((product) => product.id === id && product.color === colorsSelect.value)) {
+    
+  }
     products.push(addProduct);
     //stingify pour convertir les données au format JSON en chaîne de caractères
     localStorage.setItem("panier", JSON.stringify(products));
