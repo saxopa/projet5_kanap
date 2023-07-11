@@ -17,17 +17,12 @@ if (orderedProducts) {
           .then((res) => res.json())
           .then((data) => {
             const section = document.getElementById("cart__items");
-            let price = document.createElement("p");
-            price.textContent = data.price;
-            console.log(data);
-            console.log(price.textContent)
-            section.appendChild(price);
 
             // Création de l'article du panier
 const article = document.createElement("article");
 article.classList.add("cart__item");
 article.setAttribute("data-id", "{product-ID}");
-article.setAttribute("data-color", "{product-color}");
+article.setAttribute("data-color", "{product-colo");
 
 // Création de la div pour l'image du produit
 const imgDiv = document.createElement("div");
@@ -52,17 +47,17 @@ contentDiv.appendChild(descriptionDiv);
 
 // Création du titre du produit
 const productName = document.createElement("h2");
-productName.textContent = "Nom du produit";
+productName.textContent = data.name;
 descriptionDiv.appendChild(productName);
 
 // Création du paragraphe pour la couleur du produit
 const productColor = document.createElement("p");
-productColor.textContent = "Vert";
+productColor.textContent = product.color;
 descriptionDiv.appendChild(productColor);
 
 // Création du paragraphe pour le prix du produit
 const productPrice = document.createElement("p");
-productPrice.textContent = "42,00 €";
+productPrice.textContent = data.price + " €";
 descriptionDiv.appendChild(productPrice);
 
 // Création de la div pour les paramètres du produit
@@ -77,7 +72,7 @@ settingsDiv.appendChild(quantityDiv);
 
 // Création du paragraphe pour la quantité
 const quantityText = document.createElement("p");
-quantityText.textContent = "Qté : ";
+quantityText.textContent = "Qté : " + product.quantity;
 quantityDiv.appendChild(quantityText);
 
 // Création de l'input pour la quantité du produit
@@ -87,7 +82,7 @@ quantityInput.classList.add("itemQuantity");
 quantityInput.name = "itemQuantity";
 quantityInput.min = "1";
 quantityInput.max = "100";
-quantityInput.value = "42";
+quantityInput.value = product.quantity;
 quantityDiv.appendChild(quantityInput);
 
 // Création de la div pour la suppression du produit

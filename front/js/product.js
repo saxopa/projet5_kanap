@@ -83,26 +83,39 @@ buttonCart.addEventListener("click", () => {
     quantity: quantity.value,
     color: colorsSelect.value,
   };
-  // Test de l'ajout du produit sur la console
-  //console.log(addProduct); 
 
-                                            /* Stockage des données dans le local storage */
+  // Test de l'ajout du produit sur la console
+  // console.log(addProduct); 
+
+  /* Stockage des données dans le local storage */
 
   // Création d'un tableau pour stocker les produits
   let products = [];
   if (localStorage.getItem("panier") !== null) {
     // Si le panier n'est pas vide, je récupère les données du panier
-    //parse pour convertir une chaine de caractère au format JSON en objet JS
+    // parse pour convertir une chaîne de caractères au format JSON en objet JS
     products = JSON.parse(localStorage.getItem("panier"));
   }
 
-  if (products.find((product) => product.id === id && product.color === colorsSelect.value)) {
-    
-  }
+  // Vérifier si le produit existe déjà dans le panier
+  const existingProduct = products.find(
+    (product) => product.id === id && product.color === colorsSelect.value
+  );
+
+  if (existingProduct) {
+    // Le produit existe déjà dans le panier, mettre à jour la quantité
+    existingProduct.quantity = parseInt(existingProduct.quantity) + parseInt(quantity.value);
+  } else {
+    // Le produit n'existe pas dans le panier, l'ajouter
     products.push(addProduct);
-    //stingify pour convertir les données au format JSON en chaîne de caractères
-    localStorage.setItem("panier", JSON.stringify(products));
-    window.location.href = "cart.html";
+  }
+
+  // Supprimer les doublons dans le panier (même produit avec la même couleur)
+  const uniqueProducts = Array.from(new Set(products.map(JSON.stringify))).map(JSON.parse);
+
+  // stringify pour convertir les données au format JSON en chaîne de caractères
+  localStorage.setItem("panier", JSON.stringify(uniqueProducts));
+  window.location.href = "cart.html";
 });
 
 // Appel de la fonction pour récupérer et afficher les détails de l'article
