@@ -110,12 +110,10 @@ buttonCart.addEventListener("click", () => {
     products.push(addProduct);
   }
 
-  // Supprimer les doublons dans le panier (même produit avec la même couleur)
-  const uniqueProducts = Array.from(new Set(products.map(JSON.stringify))).map(JSON.parse);
-
   // stringify pour convertir les données au format JSON en chaîne de caractères
-  localStorage.setItem("panier", JSON.stringify(uniqueProducts));
+  localStorage.setItem("panier", JSON.stringify(products));
   window.location.href = "cart.html";
+
 });
 
 // Appel de la fonction pour récupérer et afficher les détails de l'article

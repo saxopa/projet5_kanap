@@ -1,11 +1,11 @@
 //adresse API
 const url = "http://localhost:3000/api/products";
 // Création des éléments affichés dans le panier
-/// Récupération des produits commandés depuis le local storage
+// Récupération des produits commandés depuis le local storage
 const orderedProducts = localStorage.getItem("panier");
 if (orderedProducts) {
-  const products = JSON.parse(orderedProducts);
-  console.log("Produits commandés : ", products);
+  let products = JSON.parse(orderedProducts);
+  console.log("Le panier contient : ", products);
 
   // Affichage des produits dans le panier
   const cartContainer = document.getElementById("cartContainer");
@@ -22,7 +22,7 @@ if (orderedProducts) {
 const article = document.createElement("article");
 article.classList.add("cart__item");
 article.setAttribute("data-id", "{product-ID}");
-article.setAttribute("data-color", "{product-colo");
+article.setAttribute("data-color", "{product-color}");
 
 // Création de la div pour l'image du produit
 const imgDiv = document.createElement("div");
@@ -72,7 +72,7 @@ settingsDiv.appendChild(quantityDiv);
 
 // Création du paragraphe pour la quantité
 const quantityText = document.createElement("p");
-quantityText.textContent = "Qté : " + product.quantity;
+quantityText.textContent = "Qté : ";
 quantityDiv.appendChild(quantityText);
 
 // Création de l'input pour la quantité du produit
@@ -85,16 +85,55 @@ quantityInput.max = "100";
 quantityInput.value = product.quantity;
 quantityDiv.appendChild(quantityInput);
 
+quantityDiv.addEventListener("change", (e) => {
+    product.quantity = e.target.value;
+    //mettre à jour le localStorage
+    localStorage.setItem("panier", JSON.stringify(products));
+
+    
+});
 // Création de la div pour la suppression du produit
 const deleteDiv = document.createElement("div");
 deleteDiv.classList.add("cart__item__content__settings__delete");
 settingsDiv.appendChild(deleteDiv);
+
+
 
 // Création du paragraphe pour la suppression du produit
 const deleteText = document.createElement("p");
 deleteText.classList.add("deleteItem");
 deleteText.textContent = "Supprimer";
 deleteDiv.appendChild(deleteText);
+
+
+// Supprimer l'élément du panier
+deleteText.addEventListener("click", () => {
+  // Supprimer l'élément du panier
+
+
+  /* Mettre à jour la liste des produits commandés (products) en supprimant l'élément correspondant
+  const productId = cartItem.getAttribute("data-id");
+  products = products.filter((product) => product.id !== productId);
+
+  // Mettre à jour le local storage avec la nouvelle liste de produits après suppression
+  localStorage.setItem("panier", JSON.stringify(products));
+  */
+  
+  for(let i=0; i<products.length; i++){
+    if(products[i].id === product.id && products[i].color === product.color){
+      products.splice(i, 1);
+      localStorage.setItem("panier", JSON.stringify(products));
+      const cartItem = deleteText.closest(".cart__item");
+      cartItem.remove();
+    }
+  }
+
+});
+
+
+
+
+
 
 // Ajout de l'article au conteneur du panier
 section.appendChild(article);
@@ -119,8 +158,20 @@ section.appendChild(article);
     const divImg = document.createElement('div');
     divImg.className = 'cart__item__img';
 
+      //afficher le totalQuantity dans le panier
+        let totalQuantity = document.getElementById("totalQuantity");
+        totalQuantity.textContent = product.quantity;
+
+
+
+
+
+
+
 });
 }
+
+
 
 
 
