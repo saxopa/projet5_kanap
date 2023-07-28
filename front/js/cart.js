@@ -101,30 +101,7 @@ if (orderedProducts) {
           deleteText.textContent = "Supprimer";
           deleteDiv.appendChild(deleteText);
 
-          //
 
-          // Après avoir affiché les articles du panier
-          const { totalPrice, totalQuantity } = calculateCart(products);
-          const totalQuantityElement = document.getElementById("totalQuantity");
-          const totalPriceElement = document.getElementById("totalPrice");
-
-          // Mettre à jour la quantité totale et le prix total dans le HTML
-          totalQuantityElement.textContent = totalQuantity;
-          totalPriceElement.textContent = totalPrice.toFixed(2) + " €";
-
-          function calculateCart(products) {
-            let totalPrice = 0;
-            let totalQuantity = 0;
-
-            products.forEach((product) => {
-              totalPrice += product.price * product.quantity;
-              totalQuantity += product.quantity;
-            });
-
-            return { totalPrice, totalQuantity };
-          }
-
-          //
 
           // Supprimer l'élément du panier
           deleteText.addEventListener("click", () => {
@@ -167,15 +144,25 @@ if (orderedProducts) {
 
     //afficher le totalQuantity dans le panier
     let totalQuantity = document.getElementById("totalQuantity");
-    totalQuantity.textContent = product.quantity;
+    totalQuantity.textContent = products.totalQuantity;
   });
+  function calculateCart(products) {
+    let totalPrice = 0;
+    let totalQuantity = 0;
+  
+    products.forEach((product) => {
+      const quantity = parseInt(product.quantity, 10); // Convertir la quantité en nombre
+      totalPrice += product.price * quantity;
+      totalQuantity += quantity;
+    });
+  
+    console.log("Quantité totale :", totalQuantity);
+    console.log("Prix total :", totalPrice);
+  
+    return { totalPrice, totalQuantity };
+  }
+  calculateCart(products);
 }
 
-function calculateCart(products) {
-  let total = 0;
-  products.forEach((product) => {
-    total += product.price * product.quantity;
-    console.log(total);
-  });
-  return total;
-}
+
+
