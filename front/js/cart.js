@@ -86,9 +86,16 @@ if (orderedProducts) {
           quantityDiv.appendChild(quantityInput);
 
           quantityDiv.addEventListener("change", (e) => {
-            product.quantity = e.target.value;
+            if (e.target.value > 0) {
+              product.quantity = e.target.value;
             //mettre à jour le localStorage
             localStorage.setItem("panier", JSON.stringify(products));
+            calculateCart(products);
+            }else{
+              e.target.value = product.quantity;
+              alert("La quantité doit être supérieure à 0")
+            }
+            
           });
           // Création de la div pour la suppression du produit
           const deleteDiv = document.createElement("div");
@@ -120,6 +127,7 @@ if (orderedProducts) {
                 cartItem.remove();
               }
             }
+            calculateCart(products);
           });
 
           // Ajout de l'article au conteneur du panier
@@ -142,27 +150,100 @@ if (orderedProducts) {
     const divImg = document.createElement("div");
     divImg.className = "cart__item__img";
 
-    //afficher le totalQuantity dans le panier
-    let totalQuantity = document.getElementById("totalQuantity");
-    totalQuantity.textContent = products.totalQuantity;
+    
+    calculateCart(products);
+    
   });
-  function calculateCart(products) {
-    let totalPrice = 0;
-    let totalQuantity = 0;
+
+
   
-    products.forEach((product) => {
-      const quantity = parseInt(product.quantity, 10); // Convertir la quantité en nombre
-      totalPrice += product.price * quantity;
-      totalQuantity += quantity;
+  
+}
+function calculateCart(products) {
+  let totalPrice = 0;
+  let totalQuantity = 0;
+
+  products.forEach((product) => {
+    totalQuantity += parseInt(product.quantity, 10);
+    
+    getProductById(product.id).then((data) => {
+      totalPrice += parseInt(data.price) * parseInt(product.quantity);
+      let totalPriceElement = document.getElementById("totalPrice");
+      totalPriceElement.textContent = totalPrice;
     });
-  
-    console.log("Quantité totale :", totalQuantity);
-    console.log("Prix total :", totalPrice);
-  
-    return { totalPrice, totalQuantity };
-  }
-  calculateCart(products);
+    
+  });
+//afficher le totalQuantity dans le panier
+let totalQuantityElement = document.getElementById("totalQuantity");
+totalQuantityElement.textContent = totalQuantity;
+
+  console.log("Quantité totale :", totalQuantity);
+  console.log("Prix total :", totalPrice);
 }
 
+function getProductById(id) {
+  return fetch(url + "/" + id)
+    .then((res) => res.json())
+    .then((product) => {
+      return product;
 
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
 
+//*****************Regex*****************
+
+// Créer les expressions régulières pour chaque champ du formulaire
+const nameRegex = new RegExp("^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$");
+const addressRegex = new RegExp("^[A-Za-z0-9\\s\\-.,']+$");
+const cityRegex = new RegExp("^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$");
+const emailRegex = new RegExp("^\\S+@\\S+\\.\\S+$");
+
+// Récupérer les éléments du formulaire
+const firstNameInput = document.getElementById("firstName");
+const lastNameInput = document.getElementById("lastName");
+const addressInput = document.getElementById("address");
+const cityInput = document.getElementById("city");
+const emailInput = document.getElementById("email");
+
+// Valider le formulaire lors de la soumission
+const form = document.querySelector(".cart__order__form");
+form.addEventListener("submit", (event) => {
+  event.preventDefault(); // Empêcher l'envoi du formulaire pour l'exemple
+
+  // Valider les champs du formulaire
+  if (!nameRegex.test(firstNameInput.value)) {
+    displayErrorMessage("firstNameErrorMsg", "Le prénom est invalide.");
+    return;
+  }
+
+  if (!nameRegex.test(lastNameInput.value)) {
+    displayErrorMessage("lastNameErrorMsg", "Le nom de famille est invalide.");
+    return;
+  }
+
+  if (!addressRegex.test(addressInput.value)) {
+    displayErrorMessage("addressErrorMsg", "L'adresse est invalide.");
+    return;
+  }
+
+  if (!cityRegex.test(cityInput.value)) {
+    displayErrorMessage("cityErrorMsg", "La ville est invalide.");
+    return;
+  }
+
+  if (!emailRegex.test(emailInput.value)) {
+    displayErrorMessage("emailErrorMsg", "L'email est invalide.");
+    return;
+  }
+  // Si tout est valide, soumettre le formulaire
+  form.submit(); // À modifier selon votre utilisation réelle
+});
+
+// Fonction pour afficher le message d'erreur pour chaque champ
+function displayErrorMessage(errorMsgId, message) {
+  const errorMessage = document.getElementById(errorMsgId);
+  errorMessage.textContent = message;
+}
