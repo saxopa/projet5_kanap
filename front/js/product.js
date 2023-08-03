@@ -2,28 +2,29 @@
 const params = new URL(document.location).searchParams;
 // Je stocke l'id dans une variable
 const id = params.get("id");
-// Je vérifie si ça fonctionne bien
-console.log("L'ID de cet article est : " + id);
 // Je stocke l'URL de l'API dans une variable en y ajoutant l'id
 const localUrl = `http://localhost:3000/api/products/${id}`;
 
+// Sélection des éléments du DOM
 const colorsSelect = document.getElementById("colors");
 const quantity = document.getElementById("quantity");
-
-// Je sélectionne les éléments du DOM
 const titleElement = document.getElementById("title");
 const priceElement = document.getElementById("price");
 const descriptionElement = document.getElementById("description");
 const containerImg = document.querySelector(".item__img");
 const buttonCart = document.getElementById("addToCart");
+const itemContentSettings = document.querySelector(".item__content__settings");
+
+// Création de l'élément pour afficher les erreurs
+const errorElement = document.createElement("p");
+errorElement.setAttribute("id", "error");
+itemContentSettings.appendChild(errorElement);
 
 // Fonction pour récupérer et afficher les détails de l'article
 const fetchArticle = () => {
   fetch(localUrl)
     .then((res) => res.json())
     .then((data) => {
-      //console.log(data);
-
       // J'ajoute l'image à l'élément img
       const photo = document.createElement("img");
       photo.src = data.imageUrl;
@@ -57,7 +58,7 @@ const fetchArticle = () => {
 };
 
 // Vérification ajout au panier
-buttonCart.addEventListener("click", (e) => {
+buttonCart.addEventListener("click", () => {
   if (validationCart() === "") {
     console.log("OK");
   } else {
@@ -66,11 +67,19 @@ buttonCart.addEventListener("click", (e) => {
   }
 });
 
+// Fonction de validation pour le panier
 function validationCart() {
   let message = "";
   // Validation quantité
-  if (quantity.value < 1 || quantity.value > 100) {
+  if (quantity.value === "") {
+    message = "Veuillez choisir une quantité entre 1 et 100";
+  } else if (quantity.value < 1 || quantity.value > 100) {
     message = "La quantité doit être comprise entre 1 et 100";
+  }
+
+  // Validation couleur
+  if (colorsSelect.value === "") {
+    message = "Veuillez choisir une couleur";
   }
   return message;
 }
@@ -83,11 +92,6 @@ buttonCart.addEventListener("click", () => {
     quantity: quantity.value,
     color: colorsSelect.value,
   };
-
-  // Test de l'ajout du produit sur la console
-  // console.log(addProduct); 
-
-  /* Stockage des données dans le local storage */
 
   // Création d'un tableau pour stocker les produits
   let products = [];
@@ -103,17 +107,37 @@ buttonCart.addEventListener("click", () => {
   );
 
   if (existingProduct) {
-    // Le produit existe déjà dans le panier, mettre à jour la quantité
+    // Si Le produit existe déjà dans le panier, mettre à jour la quantité
     existingProduct.quantity = parseInt(existingProduct.quantity) + parseInt(quantity.value);
   } else {
-    // Le produit n'existe pas dans le panier, l'ajouter
+    // Sinon Ajout du produit dans le tableau
     products.push(addProduct);
   }
 
-  // stringify pour convertir les données au format JSON en chaîne de caractères
-  localStorage.setItem("panier", JSON.stringify(products));
-  window.location.href = "cart.html";
+  // Vérification qu'une couleur et une quantité ont bien été sélectionnées
+  const errorMessage = validationCart();
+  if (errorMessage !== "") {
+    // Affichage d'un message d'erreur
+    errorElement.textContent = errorMessage;
+  } else {
+    // stringify pour convertir les données au format JSON en chaîne de caractères
+    localStorage.setItem("panier", JSON.stringify(products));
+    window.location.href = "cart.html";
+  }
+});
 
+// Récupération de la valeur du select
+colorsSelect.addEventListener("change", () => {
+  // Effacer le message d'erreur lorsqu'une nouvelle couleur est sélectionnée
+  errorElement.textContent = "";
+  console.log(colorsSelect.value);
+});
+
+// Récupération de la valeur du quantity
+quantity.addEventListener("change", () => {
+  // Effacer le message d'erreur lorsqu'une nouvelle quantité est sélectionnée
+  errorElement.textContent = "";
+  console.log(quantity.value);
 });
 
 // Appel de la fonction pour récupérer et afficher les détails de l'article
