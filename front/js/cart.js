@@ -88,14 +88,13 @@ if (orderedProducts) {
           quantityDiv.addEventListener("change", (e) => {
             if (e.target.value > 0) {
               product.quantity = e.target.value;
-            //mettre à jour le localStorage
-            localStorage.setItem("panier", JSON.stringify(products));
-            calculateCart(products);
-            }else{
+              //mettre à jour le localStorage
+              localStorage.setItem("panier", JSON.stringify(products));
+              calculateCart(products);
+            } else {
               e.target.value = product.quantity;
-              alert("La quantité doit être supérieure à 0")
+              alert("La quantité doit être supérieure à 0");
             }
-            
           });
           // Création de la div pour la suppression du produit
           const deleteDiv = document.createElement("div");
@@ -107,8 +106,6 @@ if (orderedProducts) {
           deleteText.classList.add("deleteItem");
           deleteText.textContent = "Supprimer";
           deleteDiv.appendChild(deleteText);
-
-
 
           // Supprimer l'élément du panier
           deleteText.addEventListener("click", () => {
@@ -150,32 +147,29 @@ if (orderedProducts) {
     const divImg = document.createElement("div");
     divImg.className = "cart__item__img";
 
-    
     calculateCart(products);
-    
   });
-
-
-  
-  
 }
 function calculateCart(products) {
   let totalPrice = 0;
   let totalQuantity = 0;
 
+  //afficher le prix total dans le panier quand il est vide
+
+  let totalPriceElement = document.getElementById("totalPrice");
+  totalPriceElement.textContent = totalPrice;
+
   products.forEach((product) => {
     totalQuantity += parseInt(product.quantity, 10);
-    
+
     getProductById(product.id).then((data) => {
       totalPrice += parseInt(data.price) * parseInt(product.quantity);
-      let totalPriceElement = document.getElementById("totalPrice");
       totalPriceElement.textContent = totalPrice;
     });
-    
   });
-//afficher le totalQuantity dans le panier
-let totalQuantityElement = document.getElementById("totalQuantity");
-totalQuantityElement.textContent = totalQuantity;
+  //afficher le totalQuantity dans le panier
+  let totalQuantityElement = document.getElementById("totalQuantity");
+  totalQuantityElement.textContent = totalQuantity;
 
   console.log("Quantité totale :", totalQuantity);
   console.log("Prix total :", totalPrice);
@@ -186,20 +180,18 @@ function getProductById(id) {
     .then((res) => res.json())
     .then((product) => {
       return product;
-
     })
     .catch((error) => {
       console.log(error);
     });
 }
-
-//*****************Regex*****************
+//***********************************************Formulaire***********************************************//
 
 // Créer les expressions régulières pour chaque champ du formulaire
 const nameRegex = new RegExp("^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$");
 const addressRegex = new RegExp("^[A-Za-z0-9\\s\\-.,']+$");
 const cityRegex = new RegExp("^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$");
-const emailRegex = new RegExp("^\\S+@\\S+\\.\\S+$");
+const emailRegex = new RegExp("^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+[.]{1}[a-zA-Z0-9]{2,10}$");
 
 // Récupérer les éléments du formulaire
 const firstNameInput = document.getElementById("firstName");
@@ -238,12 +230,40 @@ form.addEventListener("submit", (event) => {
     displayErrorMessage("emailErrorMsg", "L'email est invalide.");
     return;
   }
+
+  //***********************************************Envoi des données***********************************************//
+// Récupérer les données du formulaire
+const contact = {
+  firstName: firstNameInput.value,
+  lastName: lastNameInput.value,
+  address: addressInput.value,
+  city: cityInput.value,
+  email: emailInput.value,
+};
+
+// Récupérer les données du panier
+const produits = [];
+for (let i = 0; i < cart.length; i++) {
+  produits.push(cart[i].id);
+}
+
+fetch("http://localhost:3000/api/teddies/order", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ contact, produits }),
+})
+
   // Si tout est valide, soumettre le formulaire
-  form.submit(); // À modifier selon votre utilisation réelle
+  form.submit(); 
 });
+
 
 // Fonction pour afficher le message d'erreur pour chaque champ
 function displayErrorMessage(errorMsgId, message) {
   const errorMessage = document.getElementById(errorMsgId);
   errorMessage.textContent = message;
 }
+
+

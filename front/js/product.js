@@ -17,7 +17,7 @@ const itemContentSettings = document.querySelector(".item__content__settings");
 
 // Création de l'élément pour afficher les erreurs
 const errorElement = document.createElement("p");
-errorElement.setAttribute("id", "error");
+errorElement.classList.add("message_error");
 itemContentSettings.appendChild(errorElement);
 
 // Fonction pour récupérer et afficher les détails de l'article
