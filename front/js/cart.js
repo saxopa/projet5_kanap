@@ -165,14 +165,16 @@ function calculateCart(products) {
     getProductById(product.id).then((data) => {
       totalPrice += parseInt(data.price) * parseInt(product.quantity);
       totalPriceElement.textContent = totalPrice;
+      console.log("Prix total :", totalPrice);
+      console.log("Quantité totale :", totalQuantity);
     });
   });
   //afficher le totalQuantity dans le panier
   let totalQuantityElement = document.getElementById("totalQuantity");
   totalQuantityElement.textContent = totalQuantity;
 
-  console.log("Quantité totale :", totalQuantity);
-  console.log("Prix total :", totalPrice);
+  
+
 }
 
 function getProductById(id) {
@@ -191,7 +193,9 @@ function getProductById(id) {
 const nameRegex = new RegExp("^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$");
 const addressRegex = new RegExp("^[A-Za-z0-9\\s\\-.,']+$");
 const cityRegex = new RegExp("^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$");
-const emailRegex = new RegExp("^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+[.]{1}[a-zA-Z0-9]{2,10}$");
+const emailRegex = new RegExp(
+  "^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+[.]{1}[a-zA-Z0-9]{2,10}$"
+);
 
 // Récupérer les éléments du formulaire
 const firstNameInput = document.getElementById("firstName");
@@ -204,6 +208,7 @@ const emailInput = document.getElementById("email");
 const form = document.querySelector(".cart__order__form");
 form.addEventListener("submit", (event) => {
   event.preventDefault(); // Empêcher l'envoi du formulaire pour l'exemple
+  console.log("Envoi du formulaire !")
 
   // Valider les champs du formulaire
   if (!nameRegex.test(firstNameInput.value)) {
@@ -232,38 +237,53 @@ form.addEventListener("submit", (event) => {
   }
 
   //***********************************************Envoi des données***********************************************//
-// Récupérer les données du formulaire
-const contact = {
-  firstName: firstNameInput.value,
-  lastName: lastNameInput.value,
-  address: addressInput.value,
-  city: cityInput.value,
-  email: emailInput.value,
-};
+  // Récupérer les données du formulaire
+  const contact = {
+    firstName: firstNameInput.value,
+    lastName: lastNameInput.value,
+    address: addressInput.value,
+    city: cityInput.value,
+    email: emailInput.value,
+  };
 
-// Récupérer les données du panier
-const produits = [];
-for (let i = 0; i < cart.length; i++) {
-  produits.push(cart[i].id);
-}
+ 
 
-fetch("http://localhost:3000/api/teddies/order", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({ contact, produits }),
-})
-
+  // Récupérer les données du panier
+  const productsId = [];
+  const products = JSON.parse(localStorage.getItem("panier"));
+  for (let i = 0; i < products.length; i++) {
+    productsId.push(products[i].id);
+  }
+  //form.submit();
   // Si tout est valide, soumettre le formulaire
-  form.submit(); 
+  const order = {
+    contact: contact,
+    products: productsId,
+  };
+  getOrders(order);
 });
+// Fonction pour envoyer les données du formulaire et du panier au serveur
+function getOrders(order) {
+  fetch(url+"/order", {
+    method: "POST",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
 
-
+    body: JSON.stringify(order),
+    
+  }
+  
+  )
+  .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      window.location.href = `confirmation.html?=${data.orderId}`;
+});
+}
 // Fonction pour afficher le message d'erreur pour chaque champ
 function displayErrorMessage(errorMsgId, message) {
   const errorMessage = document.getElementById(errorMsgId);
   errorMessage.textContent = message;
 }
-
-
