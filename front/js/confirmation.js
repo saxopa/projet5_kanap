@@ -1,5 +1,4 @@
 let orderID = window.location.search.slice(2);
-console.log(orderID)
 let orderIdSpan = document.getElementById("orderId");
 orderIdSpan.innerHTML = orderID;
 

@@ -9,7 +9,6 @@ const getInfo = () => {
       return res.json();
     })
     .then((data) => {
-      console.log(data);
       for (product in data) {
         //Je créer les élements en JS
         //Mélanger html et js n'est pas conseillé il vaut mieux créer le

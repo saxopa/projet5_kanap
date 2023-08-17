@@ -5,7 +5,6 @@ const url = "http://localhost:3000/api/products";
 const orderedProducts = localStorage.getItem("panier");
 if (orderedProducts) {
   let products = JSON.parse(orderedProducts);
-  console.log("Le panier contient : ", products);
 
   // Affichage des produits dans le panier
   const cartContainer = document.getElementById("cartContainer");
@@ -86,14 +85,14 @@ if (orderedProducts) {
           quantityDiv.appendChild(quantityInput);
 
           quantityDiv.addEventListener("change", (e) => {
-            if (e.target.value > 0) {
+            if (e.target.value > 0&&e.target.value<100) {
               product.quantity = e.target.value;
               //mettre à jour le localStorage
               localStorage.setItem("panier", JSON.stringify(products));
               calculateCart(products);
             } else {
               e.target.value = product.quantity;
-              alert("La quantité doit être supérieure à 0");
+              alert("La quantité doit être supérieure à 0 et inferieure à 100");
             }
           });
           // Création de la div pour la suppression du produit
@@ -165,8 +164,6 @@ function calculateCart(products) {
     getProductById(product.id).then((data) => {
       totalPrice += parseInt(data.price) * parseInt(product.quantity);
       totalPriceElement.textContent = totalPrice;
-      console.log("Prix total :", totalPrice);
-      console.log("Quantité totale :", totalQuantity);
     });
   });
   //afficher le totalQuantity dans le panier
@@ -191,11 +188,11 @@ function getProductById(id) {
 
 // Créer les expressions régulières pour chaque champ du formulaire
 const nameRegex = new RegExp("^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$");
-const addressRegex = new RegExp("^[A-Za-z0-9\\s\\-.,']+$");
+const addressRegex = new RegExp("^\\d+\\s[\\w\\s-]+$", "gm");
 const cityRegex = new RegExp("^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$");
-const emailRegex = new RegExp(
-  "^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+[.]{1}[a-zA-Z0-9]{2,10}$"
-);
+const emailRegex = new RegExp("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$");
+
+
 
 // Récupérer les éléments du formulaire
 const firstNameInput = document.getElementById("firstName");
@@ -208,7 +205,6 @@ const emailInput = document.getElementById("email");
 const form = document.querySelector(".cart__order__form");
 form.addEventListener("submit", (event) => {
   event.preventDefault(); // Empêcher l'envoi du formulaire pour l'exemple
-  console.log("Envoi du formulaire !")
 
   // Valider les champs du formulaire
   if (!nameRegex.test(firstNameInput.value)) {
@@ -278,7 +274,6 @@ function getOrders(order) {
   )
   .then((res) => res.json())
     .then((data) => {
-      console.log(data);
       window.location.href = `confirmation.html?=${data.orderId}`;
 });
 }

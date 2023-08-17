@@ -130,14 +130,12 @@ buttonCart.addEventListener("click", () => {
 colorsSelect.addEventListener("change", () => {
   // Effacer le message d'erreur lorsqu'une nouvelle couleur est sélectionnée
   errorElement.textContent = "";
-  console.log(colorsSelect.value);
 });
 
 // Récupération de la valeur du quantity
 quantity.addEventListener("change", () => {
   // Effacer le message d'erreur lorsqu'une nouvelle quantité est sélectionnée
   errorElement.textContent = "";
-  console.log(quantity.value);
 });
 
 // Appel de la fonction pour récupérer et afficher les détails de l'article
