@@ -122,7 +122,7 @@ buttonCart.addEventListener("click", () => {
   } else {
     // stringify pour convertir les données au format JSON en chaîne de caractères
     localStorage.setItem("panier", JSON.stringify(products));
-    window.location.href = "cart.html";
+    window.location.href = "index.html";
   }
 });
 
